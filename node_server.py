@@ -4,6 +4,7 @@ import time
 
 from flask import Flask, request
 import requests
+import random
 
 
 class Block:
@@ -100,6 +101,7 @@ class Blockchain:
             block_hash = block.hash
             # remove the hash field to recompute the hash again
             # using `compute_hash` method.
+                
             delattr(block, "hash")
 
             if not cls.is_valid_proof(block, block_hash) or \
@@ -130,7 +132,7 @@ class Blockchain:
         proof = self.proof_of_work(new_block)
         self.add_block(new_block, proof)
 
-        self.unconfirmed_transactions = []
+        #self.unconfirmed_transactions = []
 
         return True
 
@@ -141,8 +143,11 @@ app = Flask(__name__)
 blockchain = Blockchain()
 blockchain.create_genesis_block()
 
+
 # the address to other participating members of the network
 peers = set()
+
+global me
 
 
 # endpoint to submit a new transaction. This will be used by
@@ -181,17 +186,29 @@ def get_chain():
 # a command to mine from our application itself.
 @app.route('/mine', methods=['GET'])
 def mine_unconfirmed_transactions():
-    result = blockchain.mine()
-    if not result:
-        return "No transactions to mine"
-    else:
-        # Making sure we have the longest chain before announcing to the network
-        chain_length = len(blockchain.chain)
-        consensus()
-        if chain_length == len(blockchain.chain):
-            # announce the recently mined block to the network
-            announce_new_block(blockchain.last_block)
-        return "Block #{} is mined.".format(blockchain.last_block.index)
+    time.sleep(random.randint(1,2)*1.0)
+    aux = True
+
+    while aux:
+        result = blockchain.mine()
+
+        if not result:
+            return "No transactions to mine"
+        else:
+            # Making sure we have the longest chain before announcing to the network
+            chain_length = len(blockchain.chain)
+            consensus()
+            if chain_length == len(blockchain.chain):
+                # announce the recently mined block to the network
+                try:
+                    announce_new_block(blockchain.last_block)
+                except Exception as e:
+                    print(e)
+                else:
+                    aux = False
+                    blockchain.unconfirmed_transactions = []
+
+            return "Block #{} is mined.".format(blockchain.last_block.index)
 
 
 # endpoint to add new peers to the network.
@@ -216,11 +233,14 @@ def register_with_existing_node():
     register current node with the node specified in the
     request, and sync the blockchain as well as peer data.
     """
+    global me
     node_address = request.get_json()["node_address"]
     if not node_address:
         return "Invalid data", 400
 
     data = {"node_address": request.host_url}
+
+    me = request.host_url
     headers = {'Content-Type': "application/json"}
 
     # Make a request to register with remote node and obtain information
@@ -316,12 +336,15 @@ def announce_new_block(block):
     Other blocks can simply verify the proof of work and add it to their
     respective chains.
     """
+
     for peer in peers:
-        url = "{}add_block".format(peer)
-        headers = {'Content-Type': "application/json"}
-        requests.post(url,
-                      data=json.dumps(block.__dict__, sort_keys=True),
-                      headers=headers)
+        print(f"{me} == {peer}")
+        if me != peer:
+            url = "{}add_block".format(peer)
+            headers = {'Content-Type': "application/json"}
+            requests.post(url,
+                          data=json.dumps(block.__dict__, sort_keys=True),
+                          headers=headers)
 
 # Uncomment this line if you want to specify the port number in the code
 #app.run(debug=True, port=8000)
