@@ -162,11 +162,10 @@ def get_chain():
 
 @app.route('/mine', methods=['GET'])
 def mine_unconfirmed_transactions():
-    #time.sleep(random.randint(1, 2) * 1.0)
+    time.sleep(random.randint(1, 2) * 1.0)
     consensus()
-    #time.sleep(random.randint(1, 2) * 1.0)
+    time.sleep(random.randint(1, 2) * 1.0)
     result = blockchain.mine()
-    to_add = blockchain.last_block
     if not result:
         return "No transactions to mine", 404
     else:
