@@ -7,9 +7,9 @@ python -m flask run --host 0.0.0.0 --port 8000 &
 
 
 export FLASK_APP=run_simulator.py
-export BACKEND_API="http://220a084b027d.ngrok.io"
+export BACKEND_API="http://68f4cfbf5de9.ngrok.io"
 python -m flask run --host 0.0.0.0 --port 5000 &
 
 sleep 3
 url="http://localhost:5000/run_simulator"            
-curl -X POST $url -d '{"host_url": "http://bed715658674.ngrok.io" }' -H 'Content-Type: application/json'
+curl -X POST $url -d '{"host_url": "http://056e7243a1ca.ngrok.io" }' -H 'Content-Type: application/json'

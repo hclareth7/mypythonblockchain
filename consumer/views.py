@@ -89,7 +89,7 @@ def truncate_file():
 
 
 def run(amount_of_data=1, difficulty=4):
-    #sleep()
+    
     # truncate_file()
     filename = 'data.json'
     datastore = ""
@@ -101,13 +101,14 @@ def run(amount_of_data=1, difficulty=4):
         datastore = json.load(f)
 
     for key, value in datastore.items():
+        sleep(2)
         status = 409
         startTime = datetime.now()
         while status == 409:
 
             new_value = json.dumps(value) * amount_of_data
 
-            submit_textarea(key, new_value)
+            submit_textarea(CONNECTED_NODE_ADDRESS, new_value)
 
             new_tx_address = f"{CONNECTED_NODE_ADDRESS}/mine"
 

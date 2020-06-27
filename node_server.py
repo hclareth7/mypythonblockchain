@@ -284,6 +284,7 @@ def consensus():
     for node in peers:
         if me != node:
             response = requests.get('{}chain'.format(node))
+            print(response.__dict__)
             length = response.json()['length']
             chain = response.json()['chain']
             if length > current_len and blockchain.check_chain_validity(chain):
