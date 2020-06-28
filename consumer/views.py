@@ -35,6 +35,8 @@ CONNECTED_NODE_ADDRESS = os.getenv("BACKEND_API")
 files = []
 host_url = ''
 
+collisions = 0
+
 
 def submit_textarea(author, content):
     """
@@ -89,19 +91,18 @@ def truncate_file():
 
 
 def run(amount_of_data=1, difficulty=4):
-    
+
     # truncate_file()
     filename = 'data.json'
     datastore = ""
     results = []
     results.append(
-        'timestamp_transactions,amount_of_data,difficulty,mine_time(sec)')
+        'timestamp_transactions,amount_of_data,difficulty,consensu(sec),collisions')
 
     with open(filename, 'r') as f:
         datastore = json.load(f)
 
     for key, value in datastore.items():
-        sleep(2)
         status = 409
         startTime = datetime.now()
         while status == 409:
@@ -116,10 +117,12 @@ def run(amount_of_data=1, difficulty=4):
 
             status = response.status_code
             if status == 409:
+                global collisions
+                collisions += 1
                 register()
-
+        
         time = datetime.now() - startTime
-        result = f"{key}, {amount_of_data}, {difficulty}, {time.total_seconds()}"
+        result = f"{key}, {amount_of_data}, {difficulty}, {time.total_seconds()}, {collisions}"
         logger.info(f"simulator {result}")
         results.append(result)
 

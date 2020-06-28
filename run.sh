@@ -1,15 +1,15 @@
 
 host_url=$1
 cd /op/blockchain/mypythonblockchain/
-python -m pip install -r requirements.txt
+python3.6 -m pip install -r requirements.txt
 export FLASK_APP=node_server.py
-python -m flask run --host 0.0.0.0 --port 8000 &
+python3.6 -m flask run --host 0.0.0.0 --port 8000 &
 
 
 export FLASK_APP=run_simulator.py
-export BACKEND_API="http://68f4cfbf5de9.ngrok.io"
+export BACKEND_API="http://37.114.85.102:8000"
 python -m flask run --host 0.0.0.0 --port 5000 &
 
 sleep 3
 url="http://localhost:5000/run_simulator"            
-curl -X POST $url -d '{"host_url": "http://056e7243a1ca.ngrok.io" }' -H 'Content-Type: application/json'
+curl -X POST $url -d '{"host_url": "http://37.114.85.128:8000" }' -H 'Content-Type: application/json'
