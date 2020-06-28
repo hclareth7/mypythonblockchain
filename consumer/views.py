@@ -103,6 +103,8 @@ def run(amount_of_data=1, difficulty=4):
         datastore = json.load(f)
 
     for key, value in datastore.items():
+        global collisions
+        collisions = 0
         status = 409
         startTime = datetime.now()
         while status == 409:
@@ -120,7 +122,7 @@ def run(amount_of_data=1, difficulty=4):
                 global collisions
                 collisions += 1
                 register()
-        
+
         time = datetime.now() - startTime
         result = f"{key}, {amount_of_data}, {difficulty}, {time.total_seconds()}, {collisions}"
         logger.info(f"simulator {result}")

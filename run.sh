@@ -7,9 +7,9 @@ python3.6 -m flask run --host 0.0.0.0 --port 8000 &
 
 
 export FLASK_APP=run_simulator.py
-export BACKEND_API="http://37.114.85.102:8000"
-python -m flask run --host 0.0.0.0 --port 5000 &
+export BACKEND_API="http://37.114.85.81:8000"
+python3.6 -m flask run --host 0.0.0.0 --port 5000 &
 
 sleep 3
 url="http://localhost:5000/run_simulator"            
-curl -X POST $url -d '{"host_url": "http://37.114.85.128:8000" }' -H 'Content-Type: application/json'
+curl -X POST $url -d '{"host_url": "http://37.114.85.81:8000" }' -H 'Content-Type: application/json'
