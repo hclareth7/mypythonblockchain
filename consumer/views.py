@@ -35,8 +35,6 @@ CONNECTED_NODE_ADDRESS = os.getenv("BACKEND_API")
 files = []
 host_url = ''
 
-collisions = 0
-
 
 def submit_textarea(author, content):
     """
@@ -103,8 +101,7 @@ def run(amount_of_data=1, difficulty=4):
         datastore = json.load(f)
 
     for key, value in datastore.items():
-        global collisions
-        collisions = 0
+        collisions=0
         status = 409
         startTime = datetime.now()
         while status == 409:
@@ -119,7 +116,6 @@ def run(amount_of_data=1, difficulty=4):
 
             status = response.status_code
             if status == 409:
-                global collisions
                 collisions += 1
                 register()
 
@@ -130,8 +126,6 @@ def run(amount_of_data=1, difficulty=4):
 
     create_file_from_list(
         f'consumer/resources/output_{datetime.now()}_diff{difficulty}_amount{amount_of_data}.csv', results)
-
-
 @app.route("/get_file")
 def getPlotCSV():
     csv = ''
